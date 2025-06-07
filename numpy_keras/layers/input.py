@@ -21,4 +21,4 @@ class Input:
         return self.__output_dim
     
     def __str__(self):
-        return f"Input(shape={self.__output_dim})"
+        return f"{self.__class__.__name__}(shape={self.__output_dim})"

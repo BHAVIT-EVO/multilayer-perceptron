@@ -79,4 +79,4 @@ class Dropout:
         return self.__output_dim
     
     def __str__(self):
-        return f"Dropout(rate={self.__rate})"
+        return f"{self.__class__.__name__}(rate={self.__rate})"

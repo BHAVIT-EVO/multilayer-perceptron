@@ -131,4 +131,4 @@ class BatchNormalization(object):
         return self.__output_dim
     
     def __str__(self):
-        return f"BatchNormalization(momentum={self.__momentum}, epsilon={self.__epsilon})"
+        return f"{self.__class__.__name__}(momentum={self.__momentum}, epsilon={self.__epsilon})"

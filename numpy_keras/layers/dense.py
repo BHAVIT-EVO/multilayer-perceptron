@@ -95,7 +95,7 @@ class Dense:
     def forward(
             self, 
             inputs: np.ndarray, 
-            is_training: bool,
+            **kwargs,
         ) -> np.ndarray:
         
         """
@@ -152,4 +152,4 @@ class Dense:
         return self.__units
     
     def __str__(self):
-        return f"Dense(units={self.__units}, activation={self.__activation})"
+        return f"{self.__class__.__name__}(units={self.__units}, activation={self.__activation})"

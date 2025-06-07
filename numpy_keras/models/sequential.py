@@ -1,4 +1,5 @@
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from typing import (
     List, 
     Tuple,
@@ -255,23 +256,35 @@ class Sequential:
         return output
     
     def summary(self):
-        print("Model: Sequential")
-        print("_" * 65)
-        print(f"{'Layer (type)':<20} {'Output Shape':<20} {'Param #':<10}")
-        print("=" * 65)
+        lines = []
+        lines.append("Model: Sequential")
+        lines.append("_" * 65)
+        lines.append(f"{'Layer (type)':<20} {'Output Shape':<20} {'Param #':<10}")
+        lines.append("=" * 65)
 
         total_params = 0
 
-        for layer_name, layer in self.layers.items():
-            params = np.sum([np.prod(v.shape) for v in layer.params.values()]) if hasattr(layer, 'params') else 0
-            output_shape = layer.output_dim if hasattr(layer, 'output_dim') else 'N/A'
-            print(f"{layer_name:<20} {str(output_shape):<20} {params:<10,}")
+        layer_names = list(self.layers.keys())
+        layers = list(self.layers.values())
 
+        with ThreadPoolExecutor() as executor:
+            param_counts = list(
+                executor.map(
+                    lambda layer: sum(v.size for v in getattr(layer, 'params', {}).values()), 
+                    layers
+                )
+            )
+
+        for layer_name, layer, params in zip(layer_names, layers, param_counts):
+            output_shape = getattr(layer, 'output_dim', 'N/A')
+            lines.append(f"{layer_name:<20} {str(output_shape):<20} {params:<10,}")
             total_params += params
-        
-        print("=" * 65)
-        print(f"Total params: {total_params:,}")
-        print("_" * 65)
+
+        lines.append("=" * 65)
+        lines.append(f"Total params: {total_params:,}")
+        lines.append("_" * 65)
+
+        print("\n".join(lines))
 
     def __build(
             self,
@@ -314,7 +327,7 @@ class Sequential:
         for layer in self.layers.values():
             if not hasattr(layer, 'forward'):
                 continue
-            output = layer.forward(inputs, is_training)
+            output = layer.forward(inputs, is_training=is_training)
             inputs = output
         return output
     

@@ -97,4 +97,4 @@ class Activation:
         return self.__output_dim
     
     def __str__(self):
-        return f"Activation(activation={self.__activation})"
+        return f"{self.__class__.__name__}(activation={self.__activation})"

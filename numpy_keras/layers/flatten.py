@@ -45,5 +45,5 @@ class Flatten:
         return math.prod(self.__input_shape)
     
     def __str__(self):
-        return f"Flatten(input_shape={self.__input_shape})"
+        return f"{self.__class__.__name__}(input_shape={self.__input_shape})"
             
